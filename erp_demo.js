@@ -15,7 +15,8 @@ async function getSkuStock() { // 获取库存
         spec_no: 'AHCZ00030019'  // spec_no, barcode
     },
     headers: {
-      accept: 'application/json'
+        'accept': 'application/json',
+        'content-type': 'application/json'
     }
   });
   console.log(result)
@@ -33,7 +34,8 @@ async function getPlatformGoods(){ // 获取平台货品
         shop_no: 'FLIPOS_XIAOCHENGXU'
     },
     headers: {
-      accept: 'application/json'
+        'accept': 'application/json',
+        'content-type': 'application/json'
     }
   });
   console.log(result)

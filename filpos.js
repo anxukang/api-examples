@@ -11,7 +11,8 @@ async function getTemplateList() { // 获取库存
             page_size: 10,
         },
         headers: {
-            accept: 'application/json'
+            'accept': 'application/json',
+            'content-type': 'application/json'
         }
     });
     console.log(result)
