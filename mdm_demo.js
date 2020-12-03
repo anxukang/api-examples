@@ -9,7 +9,7 @@ var qs = require('qs');
 
 
 async function getPlatformGoods() { // 获取平台货品
-    var url = 'http://mdm.api.harmay.com/mm/v1/skus';
+    var url = 'http://mm.api.harmay.com/mm/v1/skus';
     let query =   {
         _start: 0,
         _limit: 2,
@@ -61,7 +61,7 @@ async function getSpusCount() {
         }
     }).then(v => {
         console.log(v)
-    }).catch(e => {
+    }).catch(e => { 
         console.log(e.message)
     })
 }
