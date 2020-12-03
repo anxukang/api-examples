@@ -106,7 +106,7 @@ async function getSpusCount() {
             is_deleted: false,
             'category.name_containss': 'SHEET',
             _or: [
-                { 'skus.sku_spec.texture__containss': '纸质' },
+                { 'skus.sku_spec.texture_containss': '纸质' },
                 { 'skus.sku_spec.texture': '液体' }
             ]
 
