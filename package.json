@@ -18,6 +18,7 @@
   "homepage": "https://github.com/HARMAY-DEV/api-examples#readme",
   "dependencies": {
     "aliyun-api-gateway": "^1.1.6",
+    "dotenv": "^8.2.0",
     "node-fetch": "^2.6.1",
     "qs": "^6.9.4"
   }

@@ -1,94 +1,146 @@
 require('dotenv').config({});
 
-const Client = require('aliyun-api-gateway').Client;
-const client = new Client(process.env.APP_KEY, process.env.APP_SECRET);
-
-
+const fetch = require('node-fetch');
+const base_url = 'http://cms.api.harmay.com/mm/v1';
+let user = {
+    "identifier": process.env.USER_NAME,
+    "password": process.env.USER_PASSWORD
+}
 var qs = require('qs');
 
+/* 
+  api https://strapi.io/documentation/v3.x/content-api/api-endpoints.html#endpoints
+  graphql  https://strapi.io/documentation/3.0.0-beta.x/plugins/graphql.html
+  filters   https://strapi.io/documentation/v3.x/content-api/parameters.html#filters
+*/
+/*spu goods_type
+     0:其它, 1:销售货品, 2:原材料, 3:包装物, 4:周转材料, 5:虚拟商品,
+*/
 
-
-async function getPlatformGoods() { // 获取平台货品
-    var url = 'http://mdm.api.harmay.com/mm/v1/skuss';
-    let query =   {
-        _start: 0,
-        _limit: 2,
-        'spu.class_name_contains': '正装',
-        process_status: 5,
-        publish_type: 1,
-        is_deleted: false,
-        is_photoed: false
-    };
-    
-    query = qs.stringify(query);
-
-    client.get(`${url}?${query}`, {
-        headers: {
-            'accept': 'application/json',
-            'content-type': 'application/json'
-        }
-    }).then(v => {
-        console.log( v)
-    }).catch(e => {
-        console.log(Object.keys(e),e.data)
+async function request(opt) {
+    let { path, method = 'get', body, query, token } = opt
+    let headers = {
+        "content-type": "application/json",
+    }
+    if (token) {
+        headers["Authorization"] = `Bearer ${token}`
+    }
+    let result = await fetch(`${base_url}${path}${query ? '?' + qs.stringify(query) : ''}`, {
+        headers: headers,
+        method: method,
+        body: body ? JSON.stringify(body) : undefined
     })
-
+    return result.json()
 }
 
 
-async function getSpusCount() {
+async function getSkus() {
 
-    var url = 'http://mdm.api.harmay.com/mm/v1/spus/count';
-    let query =   {
-        
-        process_status: 5,
-        publish_type: 1,
-        goods_type: 1,
-        is_deleted: false,
-        
-        _or: [
-            { 'skus.sku_spec.texture_containss': '纸质' },
-            { 'skus.sku_spec.texture': '液体' }
-        ]
-    };
+    let user_info = await request({
+        path: '/auth/local',
+        method: 'post',
+        body: user,
+    });
+    console.log(user_info)
     
-    query = qs.stringify(query);
-
-    client.get(`${url}?${query}`, {
-        headers: {
-            'accept': 'application/json',
-            'content-type': 'application/json'
-        }
-    }).then(v => {
-        console.log(v)
-    }).catch(e => {
-        console.log(e.message)
+    let result = await request({
+        path: '/skus',
+        method: 'get',
+        query: {
+            _start: 0,
+            _limit: 2,
+            'spu.class_name_contains': '正装',
+            process_status: 5,
+            publish_type: 1,
+            is_deleted: false,
+            is_photoed: false
+        },
+        token: user_info.jwt
     })
+
+    console.log(result[0])
+}
+
+
+
+async function getSpus() {
+    let user_info = await request({
+        path: '/auth/local',
+        method: 'post',
+        body: user
+    });
+    let result = await request({
+        path: '/spus',
+        method: 'get',
+        query: {
+            _start: 0,
+            _limit: 2,
+            process_status: 5,
+            publish_type: 1,
+            goods_type: 1,
+            is_deleted: false,
+            'category.name_containss': 'SHEET',
+            _or: [
+                { 'skus.sku_spec.texture': '纸质' },
+                { 'skus.sku_spec.texture': '液体' }
+            ]
+
+        },
+        token: user_info.jwt
+    })
+    console.log(result)
+}
+
+async function getSpusCount() {
+    let user_info = await request({
+        path: '/auth/local',
+        method: 'post',
+        body: user
+    });
+    let result = await request({
+        path: '/spus/count',
+        method: 'get',
+        query: {
+            _start: 0,
+            _limit: 2,
+            process_status: 5,
+            publish_type: 1,
+            goods_type: 1,
+            is_deleted: false,
+            'category.name_containss': 'SHEET',
+            _or: [
+                { 'skus.sku_spec.texture__containss': '纸质' },
+                { 'skus.sku_spec.texture': '液体' }
+            ]
+
+        },
+        token: user_info.jwt
+    })
+    console.log(result)
 }
 
 async function getCategory() {
-    
-    var url = 'http://mdm.api.harmay.com/mm/v1/categories';
-
-    client.get(`${url}`, {
-        headers: {
-            'accept': 'application/json',
-            'content-type': 'application/json'
-        }
-    }).then(v => {
-        console.log(v)
-    }).catch(e => {
-        console.log(e)
+    let user_info = await request({
+        path: '/auth/local',
+        method: 'post',
+        body: user,
+    });
+    let result = await request({
+        path: '/categories',
+        method: 'get',
+        query: {
+            category_parent_null: true
+        },
+        token: user_info.jwt
     })
+    console.log(result)
 
 }
 
-
-getPlatformGoods()
+getSkus()
 // getSpusCount()
+// getSpu()
 // getCategory()
-
-
 
 /* spu
 [
