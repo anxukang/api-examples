@@ -5,11 +5,12 @@ const client = new Client(process.env.APP_KEY, process.env.APP_SECRET);
 
 
 var qs = require('qs');
+const base_url =  'http://mm.api.harmay.com/mm/v1'
 
 
 
 async function getPlatformGoods() { // 获取平台货品
-    var url = 'http://mm.api.harmay.com/mm/v1/skus';
+    var url = `${base_url}/skus`;
     let query =   {
         _start: 0,
         _limit: 2,
@@ -38,7 +39,7 @@ async function getPlatformGoods() { // 获取平台货品
 
 async function getSpusCount() {
 
-    var url = 'http://mdm.api.harmay.com/mm/v1/spus/count';
+    var url = `${base_url}/spus/count`;
     let query =   {
         
         process_status: 5,
@@ -68,7 +69,7 @@ async function getSpusCount() {
 
 async function getCategory() {
     
-    var url = 'http://mdm.api.harmay.com/mm/v1/categories';
+    var url = `${base_url}/categories`;
 
     client.get(`${url}`, {
         headers: {
